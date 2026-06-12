@@ -1,0 +1,612 @@
+{
+  "info": {
+    "name": "Clinique API",
+    "_postman_id": "clinique-api-collection",
+    "description": "Collection complète de l'API REST de gestion de clinique",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api" },
+    { "key": "admin_token", "value": "" },
+    { "key": "receptionniste_token", "value": "" },
+    { "key": "medecin_token", "value": "" },
+    { "key": "patient_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/register", "host": ["{{base_url}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"nouveau@test.com\",\n  \"password\": \"pass123\",\n  \"role\": \"patient\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('admin_token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"admin@clinique.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Réceptionniste)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('receptionniste_token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"sophie@clinique.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Médecin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('medecin_token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"dr.dupont@clinique.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Patient)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('patient_token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"aminata@test.com\",\n  \"password\": \"pass123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Me (profil connecté)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth", "me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin — Médecins",
+      "item": [
+        {
+          "name": "Liste des médecins",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/medecins", "host": ["{{base_url}}"], "path": ["admin", "medecins"] }
+          }
+        },
+        {
+          "name": "Créer un médecin",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/medecins", "host": ["{{base_url}}"], "path": ["admin", "medecins"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"dr.martin@clinique.com\",\n  \"password\": \"password123\",\n  \"nom\": \"Martin\",\n  \"prenom\": \"Claire\",\n  \"specialite\": \"Cardiologie\",\n  \"telephone\": \"0700000100\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Voir un médecin",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/medecins/1", "host": ["{{base_url}}"], "path": ["admin", "medecins", "1"] }
+          }
+        },
+        {
+          "name": "Modifier un médecin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/medecins/1", "host": ["{{base_url}}"], "path": ["admin", "medecins", "1"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"specialite\": \"Neurologie et Chirurgie\",\n  \"telephone\": \"0700000001\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Activer / Désactiver un médecin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/medecins/1/toggle", "host": ["{{base_url}}"], "path": ["admin", "medecins", "1", "toggle"] }
+          }
+        },
+        {
+          "name": "Supprimer un médecin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/medecins/1", "host": ["{{base_url}}"], "path": ["admin", "medecins", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin — Réceptionnistes",
+      "item": [
+        {
+          "name": "Liste des réceptionnistes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/receptionistes", "host": ["{{base_url}}"], "path": ["admin", "receptionistes"] }
+          }
+        },
+        {
+          "name": "Créer une réceptionniste",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/receptionistes", "host": ["{{base_url}}"], "path": ["admin", "receptionistes"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"recep2@clinique.com\",\n  \"password\": \"password123\",\n  \"nom\": \"Kouassi\",\n  \"prenom\": \"Fatoumata\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Voir une réceptionniste",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/receptionistes/1", "host": ["{{base_url}}"], "path": ["admin", "receptionistes", "1"] }
+          }
+        },
+        {
+          "name": "Modifier une réceptionniste",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/receptionistes/1", "host": ["{{base_url}}"], "path": ["admin", "receptionistes", "1"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"nom\": \"Kouassi\",\n  \"prenom\": \"Sophie\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Activer / Désactiver une réceptionniste",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/receptionistes/1/toggle", "host": ["{{base_url}}"], "path": ["admin", "receptionistes", "1", "toggle"] }
+          }
+        },
+        {
+          "name": "Supprimer une réceptionniste",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/receptionistes/1", "host": ["{{base_url}}"], "path": ["admin", "receptionistes", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Réceptionniste — Patients",
+      "item": [
+        {
+          "name": "Liste des patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/patients", "host": ["{{base_url}}"], "path": ["receptionniste", "patients"] }
+          }
+        },
+        {
+          "name": "Créer un patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/patients", "host": ["{{base_url}}"], "path": ["receptionniste", "patients"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"patient@test.com\",\n  \"password\": \"pass123\",\n  \"nom\": \"Kouame\",\n  \"prenom\": \"Luc\",\n  \"sexe\": \"M\",\n  \"date_naissance\": \"1992-07-10\",\n  \"telephone\": \"0700111222\",\n  \"adresse\": \"Rue des Fleurs, Abidjan\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Rechercher un patient",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/receptionniste/patients/search?q=Koffi",
+              "host": ["{{base_url}}"],
+              "path": ["receptionniste", "patients", "search"],
+              "query": [{ "key": "q", "value": "Koffi" }]
+            }
+          }
+        },
+        {
+          "name": "Voir un patient",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/patients/1", "host": ["{{base_url}}"], "path": ["receptionniste", "patients", "1"] }
+          }
+        },
+        {
+          "name": "Modifier un patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/patients/1", "host": ["{{base_url}}"], "path": ["receptionniste", "patients", "1"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"telephone\": \"0700999888\",\n  \"adresse\": \"Nouvelle adresse\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Supprimer un patient",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/patients/1", "host": ["{{base_url}}"], "path": ["receptionniste", "patients", "1"] }
+          }
+        },
+        {
+          "name": "Historique d'un patient",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/patients/1/historique", "host": ["{{base_url}}"], "path": ["receptionniste", "patients", "1", "historique"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Réceptionniste — Consultations",
+      "item": [
+        {
+          "name": "Liste des consultations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/consultations", "host": ["{{base_url}}"], "path": ["receptionniste", "consultations"] }
+          }
+        },
+        {
+          "name": "Créer une consultation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/consultations", "host": ["{{base_url}}"], "path": ["receptionniste", "consultations"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"patient_id\": 1,\n  \"medecin_id\": 1,\n  \"date_consultation\": \"2026-06-15\",\n  \"motif\": \"Douleurs thoraciques\",\n  \"diagnostic\": \"Angine de poitrine\",\n  \"observation\": \"ECG prescrit\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Voir une consultation",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/consultations/1", "host": ["{{base_url}}"], "path": ["receptionniste", "consultations", "1"] }
+          }
+        },
+        {
+          "name": "Modifier une consultation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/consultations/1", "host": ["{{base_url}}"], "path": ["receptionniste", "consultations", "1"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"motif\": \"Douleurs thoraciques persistantes\",\n  \"observation\": \"ECG et bilan sanguin prescrits\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Supprimer une consultation",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/consultations/1", "host": ["{{base_url}}"], "path": ["receptionniste", "consultations", "1"] }
+          }
+        },
+        {
+          "name": "Médecins disponibles",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{receptionniste_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/receptionniste/medecins-disponibles", "host": ["{{base_url}}"], "path": ["receptionniste", "medecins-disponibles"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Médecin — Consultations",
+      "item": [
+        {
+          "name": "Mes consultations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{medecin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/medecin/consultations", "host": ["{{base_url}}"], "path": ["medecin", "consultations"] }
+          }
+        },
+        {
+          "name": "Voir une consultation",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{medecin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/medecin/consultations/1", "host": ["{{base_url}}"], "path": ["medecin", "consultations", "1"] }
+          }
+        },
+        {
+          "name": "Modifier diagnostic / observation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{medecin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/medecin/consultations/1", "host": ["{{base_url}}"], "path": ["medecin", "consultations", "1"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"diagnostic\": \"Hypertension arterielle stade 2\",\n  \"observation\": \"Surveiller tension 2x par jour\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Historique d'un patient",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{medecin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/medecin/patients/1/historique", "host": ["{{base_url}}"], "path": ["medecin", "patients", "1", "historique"] }
+          }
+        },
+        {
+          "name": "Dossier médical d'un patient",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{medecin_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/medecin/patients/1/dossier", "host": ["{{base_url}}"], "path": ["medecin", "patients", "1", "dossier"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patient — Espace personnel",
+      "item": [
+        {
+          "name": "Voir mon profil",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patient_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/patient/profil", "host": ["{{base_url}}"], "path": ["patient", "profil"] }
+          }
+        },
+        {
+          "name": "Modifier mon profil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patient_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/patient/profil", "host": ["{{base_url}}"], "path": ["patient", "profil"] },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"telephone\": \"0700000099\",\n  \"adresse\": \"Nouvelle adresse\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mon historique de consultations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patient_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/patient/consultations", "host": ["{{base_url}}"], "path": ["patient", "consultations"] }
+          }
+        },
+        {
+          "name": "Détail d'une consultation",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patient_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/patient/consultations/1", "host": ["{{base_url}}"], "path": ["patient", "consultations", "1"] }
+          }
+        }
+      ]
+    }
+  ]
+}
